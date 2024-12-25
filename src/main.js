@@ -7,7 +7,7 @@ import '@/permission'
 import '@/assets/main.css'      // 引入 main.css 样式文件
 import 'animate.css'; // 引入 animate.css 动画库
 import 'nprogress/nprogress.css' // 引入 nprogress.css 样式文件
-
+import '@fortawesome/fontawesome-free/css/all.css';//引入 font-awesome 图标库
 
 // 创建应用，并将 App 根组件挂载到 <div id="#app"></div> 中
 const app = createApp(App)
