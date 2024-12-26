@@ -1,9 +1,9 @@
 <template>
-    <div class="flex h-screen">
+    <div class="flex h-screen bg-purple-100">
       <!-- 左侧侧边栏 -->
       <aside
         :class="[
-          'transition-all duration-300 ease-in-out',
+          'transition-all duration-300 ease-in-out rounded-3lg', // Added rounded-lg for rounded corners
           isSidebarCollapsed ? 'w-16' : 'w-64'
         ]"
       >
@@ -21,8 +21,7 @@
         <!-- 主体内容 -->
         <main
           :class="[
-            'flex-grow p-6  overflow-y-auto',
-            isSidebarCollapsed ? 'ml-16' : 'ml-32'
+            'flex-grow p-6  overflow-y-auto bg-purple-100'
           ]"
         >
           <router-view />

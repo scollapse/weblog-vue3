@@ -1,29 +1,30 @@
 <template>
-  <div class="border-b border-gray-200 bg-white shadow">
+  <div class="pl-2 border-b border-gray-200 bg-purple-100 shadow">
     <ul class="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500">
       <li
         v-for="tab in tabStore.tabs"
         :key="tab.path"
         class="mr-2 flex items-center"
       >
-        <button
+        <div
           :class="[
-            'inline-block p-4 rounded-t-lg border-b-2 transition',
+            'inline-block p-4 rounded-3xl border-2 transition flex items-center',
             tabStore.activeTab === tab.path
-              ? 'text-blue-600 border-blue-600'
-              : 'text-gray-500 border-transparent hover:text-gray-600 hover:border-gray-300'
+              ? 'text-purple-600 border-purple-600'
+              : 'text-gray-500 border-transparent hover:text-purple-400 hover:border-purple-400'
           ]"
-          @click="changeTab(tab.path)"
         >
-          {{ tab.title }}
-        </button>
-        <button
-          v-if="tab.path !== '/admin/index'"
-          class="ml-2 text-gray-500 hover:text-gray-600"
-          @click="closeTab(tab.path)"
-        >
-          &times;
-        </button>
+          <button @click="changeTab(tab.path)">
+            {{ tab.title }}
+          </button>
+          <button
+            v-if="tab.path !== '/admin/index'"
+            class="ml-2 text-gray-500 hover:text-purple-200"
+            @click="closeTab(tab.path)"
+          >
+            &times;
+          </button>
+        </div>
       </li>
     </ul>
   </div>
@@ -76,4 +77,5 @@ watch(
 </script>
 
 <style scoped>
+/* 添加必要的样式以优化布局 */
 </style>
