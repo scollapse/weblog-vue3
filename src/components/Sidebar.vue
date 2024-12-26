@@ -25,17 +25,16 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
-import { ref } from 'vue';
+import { ref,computed } from 'vue';
+import { useMenuStore } from '@/stores/menu';
+
+const menuStore = useMenuStore();
+
+// 侧边栏折叠状态
+const  collapsed = computed(() => menuStore.isSidebarCollapsed);
 
 const route = useRoute();
 const router = useRouter();
-
-defineProps({
-    collapsed: {
-        type: Boolean,
-        default: false,
-    },
-});
 
 const menuItems = ref([
     { name: '仪表盘', link: '/admin/index', icon: 'fas fa-tachometer-alt', selected: false },
