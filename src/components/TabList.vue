@@ -1,5 +1,5 @@
 <template>
-  <div class="pl-2 border-b border-gray-200 bg-purple-100 shadow">
+  <div class="pl-2 border-b border-gray-200 bg-purple-100 shadow flex justify-between items-center">
     <ul class="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500">
       <li
         v-for="tab in tabStore.tabs"
@@ -27,13 +27,29 @@
         </div>
       </li>
     </ul>
+    <div class="relative" style="right: 20px;" ref="dropdown">
+      <button @click="toggleDropdown" class="text-gray-500 hover:text-purple-400">
+        <i class="fas fa-ellipsis-v"></i>
+      </button>
+      <transition name="fade">
+        <ul v-if="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg z-10">
+          <li>
+            <a @click="closeOtherTabs" class="block px-4 py-2 rounded-lg hover:bg-purple-100 cursor-pointer">关闭其他</a>
+          </li>
+          <li>
+            <a @click="closeAllTabs" class="block px-4 py-2 rounded-lg hover:bg-purple-100 cursor-pointer">关闭全部</a>
+          </li>
+        </ul>
+      </transition>
+    </div>
   </div>
 </template>
 
 <script setup>
+import { ref, watch } from 'vue';
 import { useTabStore } from '@/stores/tab';
 import { useRoute, useRouter } from 'vue-router';
-import { watch } from 'vue';
+import { useClickOutside } from '@/composables/utils/useClickOutside';
 
 // 引入 Tab Store
 const tabStore = useTabStore();
@@ -45,6 +61,9 @@ const router = useRouter();
 import { useMenuStore } from '@/stores/menu';
 const menuStore = useMenuStore();
 
+// 使用 useClickOutside 组合式函数
+const { isDropdownOpen, dropdown, toggleDropdown } = useClickOutside();
+
 // 切换 Tab
 const changeTab = (path) => {
   tabStore.setActiveTab(path); // 更新 Store 中的激活状态
@@ -54,15 +73,31 @@ const changeTab = (path) => {
 
 // 关闭 Tab
 const closeTab = (path) => {
+  const tabIndex = tabStore.tabs.findIndex(tab => tab.path === path);
   tabStore.removeTab(path); // 从 Store 中移除 Tab
+
   if (tabStore.activeTab === path) {
-    const remainingTabs = tabStore.tabs.filter(tab => tab.path !== path);
-    if (remainingTabs.length > 0) {
-      changeTab(remainingTabs[0].path); // 切换到第一个 Tab
+    if (tabStore.tabs.length > 0) {
+      const newActiveTab = tabStore.tabs[tabIndex] || tabStore.tabs[tabIndex - 1];
+      changeTab(newActiveTab.path); // 切换到下一个或上一个 Tab
     } else {
-      router.push('/'); // 如果没有 Tab 了，跳转到首页或其他默认路径
+      changeTab('/admin/index'); // 如果没有 Tab 了，跳转到默认路径
     }
   }
+};
+
+// 关闭其他 Tab
+const closeOtherTabs = () => {
+  tabStore.tabs = tabStore.tabs.filter(tab => tab.path === '/admin/index' || tab.path === tabStore.activeTab);
+  tabStore.saveTabs();
+  isDropdownOpen.value = false;
+};
+
+// 关闭全部 Tab
+const closeAllTabs = () => {
+  tabStore.tabs = tabStore.tabs.filter(tab => tab.path === '/admin/index');
+  changeTab('/admin/index');
+  isDropdownOpen.value = false;
 };
 
 // 监听路由变化，动态设置激活的 Tab 和菜单
@@ -78,4 +113,13 @@ watch(
 
 <style scoped>
 /* 添加必要的样式以优化布局 */
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
 </style>

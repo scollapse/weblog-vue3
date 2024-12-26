@@ -53,7 +53,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { useClickOutside } from '@/composables/utils/useClickOutside';
 import { useMenuStore } from '@/stores/menu';
 import { useFullscreen } from '@vueuse/core';
 
@@ -72,33 +72,8 @@ const toggleSidebar = () => {
     menuStore.toggleSidebar();
 };
 
-// 下拉菜单状态
-const isDropdownOpen = ref(false);
-
-// 用户名
-const userName = 'John Doe';
-
-// 切换下拉菜单状态
-const toggleDropdown = () => {
-    isDropdownOpen.value = !isDropdownOpen.value;
-};
-
-// 处理点击页面空白处关闭下拉菜单
-const handleClickOutside = (event) => {
-    if (dropdown.value && !dropdown.value.contains(event.target)) {
-        isDropdownOpen.value = false;
-    }
-};
-
-const dropdown = ref(null);
-
-onMounted(() => {
-    document.addEventListener('click', handleClickOutside);
-});
-
-onBeforeUnmount(() => {
-    document.removeEventListener('click', handleClickOutside);
-});
+// 使用 useClickOutside 组合式函数
+const { isDropdownOpen, dropdown, toggleDropdown } = useClickOutside();
 </script>
 
 <style scoped>
