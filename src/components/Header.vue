@@ -18,7 +18,7 @@
         </h1>
 
         <!-- 右侧用户菜单 -->
-        <div class="relative flex items-center">
+        <div class="relative flex items-center" ref="dropdown">
             <button class="text-white focus:outline-none hover:text-cyan-500 mr-4" @click="toggle">
                 <svg v-if="!isFullscreen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 4h6v2H6v4H4V4zm10 0h6v6h-2V6h-4V4zm6 10v6h-6v-2h4v-4h2zm-10 6H4v-6h2v4h4v2z" />
@@ -38,13 +38,13 @@
                 <ul v-if="isDropdownOpen"
                     class="absolute right-0 mt-44 w-48 bg-cyan-50 text-gray-800 rounded-lg shadow-lg z-10">
                     <li>
-                        <a href="#" class="block px-4 py-2 hover:bg-cyan-100">个人信息</a>
+                        <a href="#" class="block px-4 py-2 rounded-lg hover:bg-cyan-100">个人信息</a>
                     </li>
                     <li>
-                        <a href="#" class="block px-4 py-2 hover:bg-cyan-100">系统设置</a>
+                        <a href="#" class="block px-4 py-2 rounded-lg hover:bg-cyan-100">系统设置</a>
                     </li>
                     <li>
-                        <a href="#" class="block px-4 py-2 hover:bg-cyan-100">账号登出</a>
+                        <a href="#" class="block px-4 py-2 rounded-lg hover:bg-cyan-100">账号登出</a>
                     </li>
                 </ul>
             </transition>
@@ -53,9 +53,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useMenuStore } from '@/stores/menu';
-
 import { useFullscreen } from '@vueuse/core';
 
 // isFullscreen 表示当前是否处于全屏；toggle 用于动态切换全屏、非全屏
@@ -83,6 +82,23 @@ const userName = 'John Doe';
 const toggleDropdown = () => {
     isDropdownOpen.value = !isDropdownOpen.value;
 };
+
+// 处理点击页面空白处关闭下拉菜单
+const handleClickOutside = (event) => {
+    if (dropdown.value && !dropdown.value.contains(event.target)) {
+        isDropdownOpen.value = false;
+    }
+};
+
+const dropdown = ref(null);
+
+onMounted(() => {
+    document.addEventListener('click', handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+    document.removeEventListener('click', handleClickOutside);
+});
 </script>
 
 <style scoped>

@@ -12,7 +12,7 @@
         <nav class="mt-4">
             <ul>
                 <li v-for="item in menuItems" :key="item.name"
-                    :class="['hover:bg-gray-600 mb-2 last:border-0', item.selected ? 'bg-gray-600' : '']">
+                    :class="['hover:bg-gray-600 mb-2 last:border-0', { 'bg-gray-600': item.selected }]">
                     <a @click="navigateTo(item.link)" class="block px-4 py-3 transition flex items-center">
                         <i :class="item.icon" class="mr-3 text-lg"></i>
                         <span v-if="!collapsed">{{ item.name }}</span>
@@ -25,33 +25,43 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
-import { ref,computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useMenuStore } from '@/stores/menu';
+import { useTabStore } from '@/stores/tab';
 
 const menuStore = useMenuStore();
+const tabStore = useTabStore();
 
-// 侧边栏折叠状态
-const  collapsed = computed(() => menuStore.isSidebarCollapsed);
+const collapsed = computed(() => menuStore.isSidebarCollapsed);
+const activeMenu = computed(() => menuStore.activeMenu);
 
-const route = useRoute();
 const router = useRouter();
 
 const menuItems = ref([
-    { name: '仪表盘', link: '/admin/index', icon: 'fas fa-tachometer-alt', selected: false },
-    { name: '文章管理', link: '/admin/article/list', icon: 'fas fa-file-alt', selected: false },
-    { name: '分类管理', link: '/admin/category/list', icon: 'fas fa-th-list', selected: false },
-    { name: '标签管理', link: '/admin/tag/list', icon: 'fas fa-tags', selected: false },
-    { name: '博客设置', link: '/admin/blog/setting', icon: 'fas fa-cogs', selected: false },
+    { name: '仪表盘', link: '/admin/index', icon: 'fas fa-tachometer-alt' },
+    { name: '文章管理', link: '/admin/article/list', icon: 'fas fa-file-alt' },
+    { name: '分类管理', link: '/admin/category/list', icon: 'fas fa-th-list' },
+    { name: '标签管理', link: '/admin/tag/list', icon: 'fas fa-tags' },
+    { name: '博客设置', link: '/admin/blog/setting', icon: 'fas fa-cogs' },
 ]);
 
-menuItems.value.forEach(item => {
-    item.selected = item.link === route.path;
-});
+watch(
+  () => activeMenu.value,
+  (newActiveMenu) => {
+    menuItems.value.forEach(item => {
+        item.selected = item.link === newActiveMenu;
+    });
+  },
+  { immediate: true }
+);
 
 function navigateTo(link) {
-    menuItems.value.forEach(item => {
-        item.selected = item.link === link;
-    });
+    const selectedItem = menuItems.value.find(item => item.link === link);
+    if (selectedItem) {
+        tabStore.addTab({ title: selectedItem.name, path: selectedItem.link });
+        tabStore.setActiveTab(selectedItem.link);
+        menuStore.setActiveMenu(selectedItem.link);
+    }
     router.push(link);
 }
 </script>
