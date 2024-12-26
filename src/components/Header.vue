@@ -53,27 +53,9 @@
 </template>
 
 <script setup>
-import { useClickOutside } from '@/composables/utils/useClickOutside';
-import { useMenuStore } from '@/stores/menu';
-import { useFullscreen } from '@vueuse/core';
+import { useHeader } from '@/composables/useHeader';
 
-// isFullscreen 表示当前是否处于全屏；toggle 用于动态切换全屏、非全屏
-const { isFullscreen, toggle } = useFullscreen()
-
-const menuStore = useMenuStore();
-
-// 侧边栏折叠状态
-import { computed } from 'vue';
-
-const isSidebarCollapsed = computed(() => menuStore.isSidebarCollapsed);
-
-// 切换侧边栏折叠状态
-const toggleSidebar = () => {
-    menuStore.toggleSidebar();
-};
-
-// 使用 useClickOutside 组合式函数
-const { isDropdownOpen, dropdown, toggleDropdown } = useClickOutside();
+const { isFullscreen, toggle, isSidebarCollapsed, toggleSidebar, isDropdownOpen, dropdown, toggleDropdown } = useHeader();
 </script>
 
 <style scoped>

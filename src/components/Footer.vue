@@ -1,10 +1,14 @@
 <template>
-    <footer class="bg-gray-200 dark:bg-gray-800 py-4 text-center">
-      <p class="text-sm text-gray-600 dark:text-gray-400">
-        &copy; 2024 MyApp. All rights reserved.
+    <footer class="bg-purple-100 py-4 text-center">
+      <p class="text-sm text-gray-600">
+        &copy; 2024 Rabbit Blog. All rights reserved.
       </p>
     </footer>
-  </template>
-  
-  <script setup>
-  </script>
+</template>
+
+<script setup>
+</script>
+
+<style scoped>
+/* 添加必要的样式以优化布局 */
+</style>

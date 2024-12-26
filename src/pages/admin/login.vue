@@ -132,7 +132,7 @@ import { login } from '@/api/admin/user'
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import toast from '@/composables/utils/toast.js';
-import { setToken } from '@/composables/auth'
+import { setToken } from '@/composables/utils/cookie'
 
 const router = useRouter()
 

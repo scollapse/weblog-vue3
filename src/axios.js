@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getToken } from "@/composables/auth";
+import { getToken } from "@/composables/utils/cookie";
 import toast from "@/composables/utils/toast";
 
 // Create an axios instance

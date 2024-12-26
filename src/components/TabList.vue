@@ -46,69 +46,9 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
-import { useTabStore } from '@/stores/tab';
-import { useRoute, useRouter } from 'vue-router';
-import { useClickOutside } from '@/composables/utils/useClickOutside';
+import { useTabList } from '@/composables/useTabList';
 
-// 引入 Tab Store
-const tabStore = useTabStore();
-tabStore.loadTabs(); // 加载保存的 tabs 状态
-const route = useRoute();
-const router = useRouter();
-
-// 引入 Menu Store
-import { useMenuStore } from '@/stores/menu';
-const menuStore = useMenuStore();
-
-// 使用 useClickOutside 组合式函数
-const { isDropdownOpen, dropdown, toggleDropdown } = useClickOutside();
-
-// 切换 Tab
-const changeTab = (path) => {
-  tabStore.setActiveTab(path); // 更新 Store 中的激活状态
-  menuStore.setActiveMenu(path); // 更新菜单的选中状态
-  router.push(path); // 切换路由
-};
-
-// 关闭 Tab
-const closeTab = (path) => {
-  const tabIndex = tabStore.tabs.findIndex(tab => tab.path === path);
-  tabStore.removeTab(path); // 从 Store 中移除 Tab
-
-  if (tabStore.activeTab === path) {
-    if (tabStore.tabs.length > 0) {
-      const newActiveTab = tabStore.tabs[tabIndex] || tabStore.tabs[tabIndex - 1];
-      changeTab(newActiveTab.path); // 切换到下一个或上一个 Tab
-    } else {
-      changeTab('/admin/index'); // 如果没有 Tab 了，跳转到默认路径
-    }
-  }
-};
-
-// 关闭其他 Tab
-const closeOtherTabs = () => {
-  tabStore.tabs = tabStore.tabs.filter(tab => tab.path === '/admin/index' || tab.path === tabStore.activeTab);
-  tabStore.saveTabs();
-  isDropdownOpen.value = false;
-};
-
-// 关闭全部 Tab
-const closeAllTabs = () => {
-  tabStore.tabs = tabStore.tabs.filter(tab => tab.path === '/admin/index');
-  changeTab('/admin/index');
-  isDropdownOpen.value = false;
-};
-
-// 监听路由变化，动态设置激活的 Tab 和菜单
-watch(
-  () => route.path,
-  (newPath) => {
-    tabStore.setActiveTab(newPath);
-    menuStore.setActiveMenu(newPath);
-  },
-  { immediate: true }
-);
+const { tabStore, isDropdownOpen, dropdown, toggleDropdown, changeTab, closeTab, closeOtherTabs, closeAllTabs } = useTabList();
 </script>
 
 <style scoped>

@@ -1,5 +1,5 @@
 import router from '@/router/index'
-import { getToken } from '@/composables/auth'
+import { getToken } from '@/composables/utils/cookie'
 import toast from './composables/utils/toast'
 import { showPageLoading , hidePageLoading} from './composables/utils/mnprogress'
 
