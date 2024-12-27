@@ -14,31 +14,18 @@ export const useTabStore = defineStore('tab', {
     actions: {
         setActiveTab(tabPath) {
             this.activeTab = tabPath;
-            this.saveTabs();
+
         },
         addTab(tab) {
             if (!this.tabs.find(t => t.path === tab.path)) {
                 this.tabs.push(tab);
-                this.saveTabs();
+
             }
         },
         removeTab(path) {
             this.tabs = this.tabs.filter(tab => tab.path !== path);
-            this.saveTabs();
-        },
-        saveTabs() {
-            localStorage.setItem('tabs', JSON.stringify(this.tabs));
-            localStorage.setItem('activeTab', this.activeTab);
-        },
-        loadTabs() {
-            const savedTabs = localStorage.getItem('tabs');
-            const savedActiveTab = localStorage.getItem('activeTab');
-            if (savedTabs) {
-                this.tabs = JSON.parse(savedTabs);
-            }
-            if (savedActiveTab) {
-                this.activeTab = savedActiveTab;
-            }
+
         }
     },
+    persist: true // 开启持久化
 });

@@ -32,7 +32,7 @@
         <i class="fas fa-ellipsis-v"></i>
       </button>
       <transition name="fade">
-        <ul v-if="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg z-10">
+        <ul v-if="isDropdownOpen" class="absolute right-0 mt-2 w-28 bg-white text-gray-800 rounded-lg shadow-lg z-10">
           <li>
             <a @click="closeOtherTabs" class="block px-4 py-2 rounded-lg hover:bg-purple-100 cursor-pointer">关闭其他</a>
           </li>

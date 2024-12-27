@@ -6,7 +6,7 @@ import { useMenuStore } from '@/stores/menu';
 
 export function useTabList() {
   const tabStore = useTabStore();
-  tabStore.loadTabs();
+
   const route = useRoute();
   const router = useRouter();
   const menuStore = useMenuStore();
