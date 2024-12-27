@@ -13,8 +13,8 @@
         </button>
 
         <!-- 中间标题 -->
-        <h1 class="text-xl font-bold tracking-wide">
-            Header Title
+        <h1 class="text-xl font-bold tracking-wide font-cursive">
+            Rabbit Blog
         </h1>
 
         <!-- 右侧用户菜单 -->

@@ -14,7 +14,7 @@ export function useModifyUser() {
     });
     const showPassword = ref(false);
     const showConfirmPassword = ref(false);
-    const { userInfo, setUserInfo, logout } = useUserStore();
+    const { logout } = useUserStore();
     const openModal = (email) => {
         form.value.username = email;
         visible.value = true;
