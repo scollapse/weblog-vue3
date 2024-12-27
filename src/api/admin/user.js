@@ -9,3 +9,8 @@ export function login(email, password) {
 export function getUserInfo() {
     return axios.post("/admin/user/info/findCurrent");
 }
+
+// 修改密码
+export function modifyPassword(username, password) {
+    return axios.post("/admin/user/password/update", {username, password});
+}

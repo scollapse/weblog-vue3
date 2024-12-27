@@ -38,7 +38,7 @@
                 <ul v-if="isDropdownOpen"
                     class="absolute right-0 mt-44 w-28 bg-purple-50 text-gray-800 rounded-lg shadow-lg z-10">
                     <li>
-                        <a href="#" class="block px-4 py-2 rounded-lg hover:bg-purple-100">个人信息</a>
+                        <button class="w-full text-left block px-4 py-2 rounded-lg hover:bg-purple-100" @click="modifyUserInfo">修改密码</button>
                     </li>
                     <li>
                         <a href="#" class="block px-4 py-2 rounded-lg hover:bg-purple-100">系统设置</a>
@@ -50,13 +50,16 @@
             </transition>
         </div>
     </header>
+    <ModifyUserModal ref="modifyUserModal" />
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useHeader } from '@/composables/useHeader';
+import ModifyUserModal from '@/pages/admin/modify-user.vue';
 
-const { userInfo, setUserInfo, isFullscreen, toggle, isSidebarCollapsed, toggleSidebar, isDropdownOpen, dropdown, toggleDropdown, confirmLogout } = useHeader();
+const modifyUserModal = ref(null);
+const { userInfo, setUserInfo, isFullscreen, toggle, isSidebarCollapsed, toggleSidebar, isDropdownOpen, dropdown, toggleDropdown, confirmLogout, modifyUserInfo } = useHeader(modifyUserModal);
 
 onMounted(() => {
     if (!userInfo.value.username) {

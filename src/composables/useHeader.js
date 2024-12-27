@@ -7,7 +7,7 @@ import modal from '@/composables/utils/modal';
 import toast from '@/composables/utils/toast';
 import router from '@/router/index';
 
-export function useHeader() {
+export function useHeader(modifyUserModal) {
     const { isFullscreen, toggle } = useFullscreen();
     const menuStore = useMenuStore();
     const isSidebarCollapsed = computed(() => menuStore.isSidebarCollapsed);
@@ -22,13 +22,17 @@ export function useHeader() {
             logout();
             toast.show('success', '登出成功!');
             // 跳转登录页
-            router.push('/login')
-
+            router.push('/login');
         });
     };
 
-
-
+    const modifyUserInfo = () => {
+        if (modifyUserModal.value && typeof modifyUserModal.value.openModal === 'function') {
+            modifyUserModal.value.openModal(userInfo.value.username);
+        } else {
+            console.error('modifyUserModal is not properly initialized');
+        }
+    };
 
     return {
         userInfo,
@@ -41,5 +45,6 @@ export function useHeader() {
         dropdown,
         toggleDropdown,
         confirmLogout,
+        modifyUserInfo,
     };
 }
