@@ -1,7 +1,7 @@
 <template>
     <div class="p-4 bg-white rounded-xl shadow-md">
         <div class="flex justify-between items-center mb-4">
-            <button @click="addCategory" class="px-4 py-2 text-white bg-purple-600 rounded-xl hover:bg-purple-700">新增分类</button>
+            <button @click="$emit('add-category')" class="px-4 py-2 text-white bg-purple-600 rounded-xl hover:bg-purple-700">新增分类</button>
         </div>
         <table class="min-w-full table-auto">
             <thead class="bg-gray-50">
@@ -36,10 +36,6 @@ export default {
         },
     },
     methods: {
-        addCategory() {
-            // Logic to add a new category
-            console.log('Add category button clicked');
-        },
         deleteCategory(id) {
             // Logic to delete a category
             console.log('Delete category button clicked', id);

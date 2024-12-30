@@ -1,9 +1,11 @@
 <template>
     <div class="space-y-4">
         <search-bar @search="handleSearch" @reset="handleReset" />
-        <category-list :categories="categories" />
+        <category-list :categories="categories" @add-category="showAddCategoryDialog" />
         <pagination :total="total" :page-size="pageSize" :current-page="currentPage" :total-pages="totalPages"
             :on-prev="handlePrev" :on-next="handleNext" :on-page-click="handlePageClick" />
+        <add-category :visible="isAddCategoryDialogVisible" @add-category="handleAddCategory"
+            @cancel="hideAddCategoryDialog" />
     </div>
 </template>
 
@@ -12,13 +14,16 @@ import { ref, computed } from "vue";
 import SearchBar from "@/pages/admin/category/SearchBar.vue";
 import CategoryList from "@/pages/admin/category/CategoryList.vue";
 import Pagination from "@/components/Pagination.vue";
-import { fetchCategories } from "@/api/admin/category";
+import AddCategory from "@/pages/admin/category/AddCategory.vue";
+import { fetchCategories, addCategory } from "@/api/admin/category";
+import toast from "@/composables/utils/toast";
 
 export default {
     components: {
         SearchBar,
         CategoryList,
         Pagination,
+        AddCategory,
     },
     setup() {
         const categories = ref([]);
@@ -26,13 +31,11 @@ export default {
         const pageSize = ref(10);
         const currentPage = ref(1);
         const filters = ref({});
+        const isAddCategoryDialogVisible = ref(false);
 
         const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
 
-
-        // 获取分页数据
         function loadCategories(currentPage, pageSize, filters = {}) {
-            // 调用后台分页接口，并传入所需参数
             fetchCategories({ current: currentPage, size: pageSize, startDate: filters.startDate || "", endDate: filters.endDate || "", name: filters.name || "" }).then((res) => {
                 console.log(res);
                 if (res.success) {
@@ -41,7 +44,6 @@ export default {
                 }
             });
         }
-
 
         const handleSearch = (newFilters) => {
             filters.value = newFilters;
@@ -74,6 +76,30 @@ export default {
             loadCategories(page, pageSize.value, filters.value);
         };
 
+        const showAddCategoryDialog = () => {
+            isAddCategoryDialogVisible.value = true;
+        };
+
+        const hideAddCategoryDialog = () => {
+            isAddCategoryDialogVisible.value = false;
+        };
+
+        const handleAddCategory = (categoryName) => {
+            // Logic to add a new category
+            // 如果分类名称为空，则不添加，弹窗提示未输入分类名称
+            if (!categoryName) {
+                toast.show('error', '请输入分类名称');
+                return;
+            }
+            addCategory({name:categoryName}).then((res) => {
+                if (res.success) {
+                    toast.show('success', '新增分类成功');
+                    hideAddCategoryDialog();
+                    loadCategories(currentPage.value, pageSize.value, filters.value);
+                }
+            });
+        };
+
         loadCategories(currentPage.value, pageSize.value);
 
         return {
@@ -82,11 +108,15 @@ export default {
             pageSize,
             currentPage,
             totalPages,
+            isAddCategoryDialogVisible,
             handleSearch,
             handleReset,
             handlePrev,
             handleNext,
             handlePageClick,
+            showAddCategoryDialog,
+            hideAddCategoryDialog,
+            handleAddCategory,
         };
     },
 };

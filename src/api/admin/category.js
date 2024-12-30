@@ -5,3 +5,9 @@ export function fetchCategories(data) {
         data
     );
 }
+
+export function addCategory(data) {
+    return axios.post("/interface/admin/category/add", 
+        data
+    );
+}
