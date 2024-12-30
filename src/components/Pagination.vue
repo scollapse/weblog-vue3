@@ -10,7 +10,7 @@
         <!-- 上一页 -->
         <li>
           <button
-            @click="onPrev"
+            @click="handlePrev"
             :disabled="currentPage === 1"
             class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-white bg-purple-500  border border-e-0 border-gray-300 rounded-s-lg hover:bg-purple-700 disabled:bg-gray-500 disabled:cursor-not-allowed"
           >
@@ -24,7 +24,7 @@
           :class="{'bg-purple-50 text-purple-600': page === currentPage, 'text-gray-500 hover:text-purple-700': page !== currentPage}"
         >
             <button
-            @click="goToPage(page)"
+            @click="handlePageClick(page)"
             :class="{'flex items-center justify-center px-3 h-8 leading-tight bg-white border border-gray-300 hover:bg-purple-100 rounded': true, 'text-purple-800 font-bold': page === currentPage}"
           >
             {{ page }}
@@ -33,7 +33,7 @@
         <!-- 下一页 -->
         <li>
           <button
-            @click="onNext"
+            @click="handleNext"
             :disabled="currentPage === totalPages || totalPages === 0"
             class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-white bg-purple-500 border border-e-0 border-gray-300 rounded-e-lg hover:bg-purple-700 disabled:bg-gray-500 disabled:cursor-not-allowed"
           >
@@ -46,6 +46,8 @@
 </template>
 
 <script>
+import { ref, computed } from "vue";
+
 export default {
   props: {
     total: {
@@ -64,32 +66,53 @@ export default {
       type: Number,
       required: true,
     },
-    onPrev: {
+    loadCategories: {
       type: Function,
       required: true,
     },
-    onNext: {
-      type: Function,
+    filters: {
+      type: Object,
       required: true,
     },
-    onPageClick: {
+    setCurrentPage: {
       type: Function,
       required: true,
     },
   },
-  computed: {
-    pages() {
-      const pages = [];
-      for (let i = 1; i <= this.totalPages; i++) {
-        pages.push(i);
+  setup(props) {
+    const pages = computed(() => {
+      const pagesArray = [];
+      for (let i = 1; i <= props.totalPages; i++) {
+        pagesArray.push(i);
       }
-      return pages;
-    },
-  },
-  methods: {
-    goToPage(page) {
-      this.onPageClick(page);
-    },
+      return pagesArray;
+    });
+
+    const handlePrev = () => {
+      if (props.currentPage > 1) {
+        props.setCurrentPage(props.currentPage - 1);
+        props.loadCategories(props.currentPage - 1, props.pageSize, props.filters);
+      }
+    };
+
+    const handleNext = () => {
+      if (props.currentPage < props.totalPages) {
+        props.setCurrentPage(props.currentPage + 1);
+        props.loadCategories(props.currentPage + 1, props.pageSize, props.filters);
+      }
+    };
+
+    const handlePageClick = (page) => {
+      props.setCurrentPage(page);
+      props.loadCategories(page, props.pageSize, props.filters);
+    };
+
+    return {
+      pages,
+      handlePrev,
+      handleNext,
+      handlePageClick,
+    };
   },
 };
 </script>
