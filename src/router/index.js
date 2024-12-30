@@ -4,7 +4,7 @@ import Login from '@/pages/admin/login.vue'
 import AdminIndex from '@/pages/admin/index.vue'
 import Admin from '@/layouts/admin/admin.vue'
 import AdminArticleList from '@/pages/admin/article-list.vue'
-import AdminCategoryList from '@/pages/admin/category-list.vue'
+import AdminCategoryList from '@/pages/admin/category/CategoryPage.vue'
 import AdminTagList from '@/pages/admin/tag-list.vue'
 import AdminBlogSetting from '@/pages/admin/blog-setting.vue'
 
