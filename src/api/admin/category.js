@@ -11,3 +11,15 @@ export function addCategory(data) {
         data
     );
 }
+
+export function deleteCategory(data) {
+    return axios.post("/interface/admin/category/delete", 
+        data
+    );
+}
+
+export function fetchCategoryList(data) {
+    return axios.post("/interface/admin/category/select/list", 
+        data
+    );
+}

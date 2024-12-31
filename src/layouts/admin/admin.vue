@@ -11,7 +11,7 @@
         <!-- 主内容区域 -->
         <div class="flex flex-col flex-grow">
             <!-- 顶部导航栏 -->
-            <Header @sidebar-toggle="handleSidebarToggle" />
+            <Header  />
 
             <!-- TabList -->
             <TabList />

@@ -16,7 +16,7 @@
                     <td class="px-4 py-2">{{ category.name }}</td>
                     <td class="px-4 py-2">{{ category.createTime }}</td>
                     <td class="px-4 py-2">
-                        <button @click="deleteCategory(category.id)" class="px-2 py-1 text-white bg-red-600 rounded hover:bg-red-700">删除</button>
+                        <button @click="$emit('delete-category',category.id)" class="px-2 py-1 text-white bg-gradient-to-r from-purple-500  to-pink-500 rounded hover:from-purple-700 hover:to-red-700">删除</button>
                     </td>
                 </tr>
                 <tr v-if="categories.length === 0">
@@ -33,12 +33,6 @@ export default {
         categories: {
             type: Array,
             required: true,
-        },
-    },
-    methods: {
-        deleteCategory(id) {
-            // Logic to delete a category
-            console.log('Delete category button clicked', id);
         },
     },
 };
