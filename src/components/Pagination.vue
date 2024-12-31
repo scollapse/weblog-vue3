@@ -50,23 +50,7 @@ import { ref, computed } from "vue";
 
 export default {
   props: {
-    total: {
-      type: Number,
-      required: true,
-    },
-    pageSize: {
-      type: Number,
-      required: true,
-    },
-    currentPage: {
-      type: Number,
-      required: true,
-    },
-    totalPages: {
-      type: Number,
-      required: true,
-    },
-    loadCategories: {
+    loadData: {
       type: Function,
       required: true,
     },
@@ -74,44 +58,65 @@ export default {
       type: Object,
       required: true,
     },
-    setCurrentPage: {
-      type: Function,
-      required: true,
-    },
   },
   setup(props) {
+    const total = ref(0); // 默认总数据量
+    const pageSize = ref(10); // 默认每页大小
+    const currentPage = ref(1); // 默认当前页
+
+    const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
+
     const pages = computed(() => {
       const pagesArray = [];
-      for (let i = 1; i <= props.totalPages; i++) {
+      for (let i = 1; i <= totalPages.value; i++) {
         pagesArray.push(i);
       }
       return pagesArray;
     });
 
     const handlePrev = () => {
-      if (props.currentPage > 1) {
-        props.setCurrentPage(props.currentPage - 1);
-        props.loadCategories(props.currentPage - 1, props.pageSize, props.filters);
+      if (currentPage.value > 1) {
+        currentPage.value -= 1;
+        props.loadData(currentPage.value, pageSize.value, props.filters, setTotal);
       }
     };
 
     const handleNext = () => {
-      if (props.currentPage < props.totalPages) {
-        props.setCurrentPage(props.currentPage + 1);
-        props.loadCategories(props.currentPage + 1, props.pageSize, props.filters);
+      if (currentPage.value < totalPages.value) {
+        currentPage.value += 1;
+        props.loadData(currentPage.value, pageSize.value, props.filters, setTotal);
       }
     };
 
     const handlePageClick = (page) => {
-      props.setCurrentPage(page);
-      props.loadCategories(page, props.pageSize, props.filters);
+      currentPage.value = page;
+      props.loadData(page, pageSize.value, props.filters, setTotal);
     };
 
+    // 设置总数据量
+    const setTotal = (newTotal) => {
+      total.value = newTotal;
+    };
+
+    // 暴露刷新方法
+    const refresh = (newFilters) => {
+      currentPage.value =  1; // 重置当前页
+      props.filters = { ...newFilters }; // 更新 filters
+      props.loadData(currentPage.value, pageSize.value, props.filters, setTotal);
+    };
+
+    // 暴露 setTotal 方法
     return {
+      total,
+      pageSize,
+      currentPage,
+      totalPages,
       pages,
       handlePrev,
       handleNext,
       handlePageClick,
+      refresh,
+      setTotal, // 暴露 setTotal 方法
     };
   },
 };
