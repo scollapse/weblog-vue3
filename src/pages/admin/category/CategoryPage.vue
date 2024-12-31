@@ -4,8 +4,18 @@
         <category-list :categories="categories" @add-category="showAddCategoryDialog"
             @delete-category="onDeleteCategory" />
         <pagination :load-data="loadCategories" :filters="filters" ref="pagination" />
-        <add-category :visible="isAddCategoryDialogVisible" @add-category="handleAddCategory"
-            @cancel="hideAddCategoryDialog" />
+        <ModalForm
+            ref="addCategoryModal"
+            :title="'新增分类'"
+            :dialogWidth="'w-96'"
+            :confirmButtonText="'新增'"
+            @submit="handleAddCategory"
+        >
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2">分类名称</label>
+                <input v-model="categoryName" type="text" class="w-full px-3 py-2 border-2 border-purple-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-purple-400" />
+            </div>
+        </ModalForm>
     </div>
 </template>
 
@@ -14,22 +24,24 @@ import { ref } from "vue";
 import SearchBar from "@/components/SearchBar.vue";
 import CategoryList from "@/pages/admin/category/CategoryList.vue";
 import Pagination from "@/components/Pagination.vue";
-import AddCategory from "@/pages/admin/category/AddCategory.vue";
 import { fetchCategories, addCategory, deleteCategory } from "@/api/admin/category";
 import toast from "@/composables/utils/toast";
 import modal from '@/composables/utils/modal';
+import ModalForm from '@/components/ModalForm.vue';
+
 export default {
     components: {
         SearchBar,
         CategoryList,
         Pagination,
-        AddCategory,
+        ModalForm
     },
     setup() {
         const categories = ref([]);
         const filters = ref({});
-        const isAddCategoryDialogVisible = ref(false);
         const pagination = ref(null); // 分页组件实例
+        const addCategoryModal = ref(null); // ModalForm 组件实例
+        const categoryName = ref('');
 
         // 定义搜索 Bar
         const searchFields = ref([
@@ -68,21 +80,21 @@ export default {
 
         // 显示新增分类对话框
         const showAddCategoryDialog = () => {
-            isAddCategoryDialogVisible.value = true;
+            addCategoryModal.value.openModal();
         };
 
         // 隐藏新增分类对话框
         const hideAddCategoryDialog = () => {
-            isAddCategoryDialogVisible.value = false;
+            addCategoryModal.value.closeModal();
         };
 
         // 处理新增分类
-        const handleAddCategory = async (categoryName) => {
-            if (!categoryName) {
+        const handleAddCategory = async () => {
+            if (!categoryName.value) {
                 toast.show('error', '请输入分类名称');
                 return;
             }
-            const res = await addCategory({ name: categoryName });
+            const res = await addCategory({ name: categoryName.value });
             if (res.success) {
                 toast.show('success', '新增分类成功');
                 hideAddCategoryDialog();
@@ -109,7 +121,6 @@ export default {
             categories,
             filters,
             searchFields,
-            isAddCategoryDialogVisible,
             loadCategories,
             showAddCategoryDialog,
             hideAddCategoryDialog,
@@ -117,6 +128,8 @@ export default {
             pagination,
             refreshData,
             onDeleteCategory, // 确保定义 onDeleteCategory 方法
+            addCategoryModal,
+            categoryName
         };
     },
 };
