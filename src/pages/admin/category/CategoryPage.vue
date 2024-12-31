@@ -1,7 +1,7 @@
 <template>
     <div class="space-y-4">
         <search-bar :fields="searchFields" :filters="filters" :refresh="refreshData" />
-        <category-list :categories="categories" @add-category="showAddCategoryDialog"
+        <category-list :categories="categories" :isLoading="isLoading" @add-category="showAddCategoryDialog"
             @delete-category="onDeleteCategory" />
         <pagination :load-data="loadCategories" :filters="filters" ref="pagination" />
         <ModalForm
@@ -42,6 +42,7 @@ export default {
         const pagination = ref(null); // 分页组件实例
         const addCategoryModal = ref(null); // ModalForm 组件实例
         const categoryName = ref('');
+        const isLoading = ref(false);
 
         // 定义搜索 Bar
         const searchFields = ref([
@@ -51,16 +52,23 @@ export default {
 
         // 加载分类数据
         const loadCategories = async (currentPage, pageSize, filters, setTotal) => {
-            const res = await fetchCategories({
-                current: currentPage,
-                size: pageSize,
-                startDate: filters.startDate || "",
-                endDate: filters.endDate || "",
-                name: filters.name || "",
-            });
-            if (res.success) {
-                categories.value = res.total > 0 ? res.data : [];
-                setTotal(res.total); // 更新总数据量
+            isLoading.value = true;
+            try {
+                const res = await fetchCategories({
+                    current: currentPage,
+                    size: pageSize,
+                    startDate: filters.startDate || "",
+                    endDate: filters.endDate || "",
+                    name: filters.name || "",
+                });
+                if (res.success) {
+                    categories.value = res.total > 0 ? res.data : [];
+                    setTotal(res.total); // 更新总数据量
+                }
+            } catch (error) {
+                console.error('Failed to fetch categories:', error);
+            } finally {
+                isLoading.value = false;
             }
         };
 
@@ -129,7 +137,8 @@ export default {
             refreshData,
             onDeleteCategory, // 确保定义 onDeleteCategory 方法
             addCategoryModal,
-            categoryName
+            categoryName,
+            isLoading
         };
     },
 };

@@ -3,7 +3,13 @@
         <div class="flex justify-between items-center mb-4">
             <button @click="$emit('add-category')" class="px-4 py-2 text-white bg-purple-600 rounded-xl hover:bg-purple-700">新增分类</button>
         </div>
-        <table class="min-w-full table-auto">
+        
+        <!-- 加载效果 -->
+        <div v-if="isLoading" class="flex justify-center items-center py-8">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+        </div>
+
+        <table v-else class="min-w-full table-auto">
             <thead class="bg-gray-50">
                 <tr>
                     <th class="px-4 py-2 text-left text-gray-600">分类名称</th>
@@ -33,6 +39,10 @@ export default {
         categories: {
             type: Array,
             required: true,
+        },
+        isLoading: {
+            type: Boolean,
+            default: false,
         },
     },
 };
