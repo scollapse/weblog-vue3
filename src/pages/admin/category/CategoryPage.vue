@@ -4,16 +4,17 @@
         <category-list :categories="categories" :isLoading="isLoading" @add-category="showAddCategoryDialog"
             @delete-category="onDeleteCategory" />
         <pagination :load-data="loadCategories" :filters="filters" ref="pagination" />
-        <ModalForm
-            ref="addCategoryModal"
-            :title="'新增分类'"
-            :dialogWidth="'w-96'"
+        <ModalForm ref="addCategoryModal"      
+            :isLoading="isConfirmLoading"
+            :title="'新增分类'" 
+            :dialogWidth="'w-96'" 
             :confirmButtonText="'新增'"
-            @submit="handleAddCategory"
-        >
+            @submit="handleAddCategory" 
+            @close="clearForm">
             <div class="mb-4">
                 <label class="block text-gray-700 mb-2">分类名称</label>
-                <input v-model="categoryName" type="text" class="w-full px-3 py-2 border-2 border-purple-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-purple-400" />
+                <input v-model="form.categoryName" type="text"
+                    class="w-full px-3 py-2 border-2 border-purple-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-purple-400" />
             </div>
         </ModalForm>
     </div>
@@ -41,8 +42,9 @@ export default {
         const filters = ref({});
         const pagination = ref(null); // 分页组件实例
         const addCategoryModal = ref(null); // ModalForm 组件实例
-        const categoryName = ref('');
+        const form = ref({ categoryName: '' });
         const isLoading = ref(false);
+        const isConfirmLoading = ref(false);
 
         // 定义搜索 Bar
         const searchFields = ref([
@@ -96,17 +98,38 @@ export default {
             addCategoryModal.value.closeModal();
         };
 
+        // 模态框关闭后的事件  清空表单
+        const clearForm = () => {
+            form.value.categoryName = '';
+        };
+
         // 处理新增分类
         const handleAddCategory = async () => {
-            if (!categoryName.value) {
+            console.log('Add category button clicked', form.value.categoryName);
+            if (!form.value.categoryName) {
                 toast.show('error', '请输入分类名称');
                 return;
             }
-            const res = await addCategory({ name: categoryName.value });
-            if (res.success) {
-                toast.show('success', '新增分类成功');
-                hideAddCategoryDialog();
-                refreshData(filters.value); // 刷新数据
+
+            // 开始加载动画
+            isConfirmLoading.value = true;
+
+            try {
+                // 模拟延迟
+                const res = await addCategory({ name: form.value.categoryName });
+                if (res.success) {
+                    toast.show('success', '新增分类成功');
+                    hideAddCategoryDialog();
+                    refreshData(filters.value); // 刷新数据
+                } else {
+                    toast.show('error', res.errorMessage);
+                }
+            } catch (error) {
+                console.error('新增分类失败:', error);
+                toast.show('error', '新增分类失败，请重试');
+            } finally {
+                // 结束加载动画
+                isConfirmLoading.value = false;
             }
         };
 
@@ -137,8 +160,10 @@ export default {
             refreshData,
             onDeleteCategory, // 确保定义 onDeleteCategory 方法
             addCategoryModal,
-            categoryName,
-            isLoading
+            form,
+            isLoading,
+            clearForm,
+            isConfirmLoading
         };
     },
 };
