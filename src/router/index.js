@@ -6,7 +6,7 @@ import Admin from '@/layouts/admin/admin.vue'
 import AdminArticleList from '@/pages/admin/article-list.vue'
 import AdminCategoryList from '@/pages/admin/category/CategoryPage.vue'
 import AdminTagList from '@/pages/admin/tag/TagPage.vue'
-import AdminBlogSetting from '@/pages/admin/blog-setting.vue'
+import AdminBlogSetting from '@/pages/admin/setting/blog-setting.vue'
 
 //统一在这里声明所有路由
 const routes = [
